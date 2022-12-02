@@ -10,19 +10,41 @@ import Foundation
 enum StarHuntErrors : Error {
 	case BadBundle
 	case BadFile
+	case MissingFile(String)
 }
 
 let CurrentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath);
 let StarBundleURL = URL(fileURLWithPath: "StarHunt.bundle", relativeTo: CurrentDirectory);
 let StarBundle = Bundle(url: StarBundleURL);
 
-do {
+
+func ReadFile(_ FileName:String) throws -> Array<Substring>
+{
 	if let ValidBundle = StarBundle
 	{
-		try?Day1(ValidBundle);
-	} else {
-		throw StarHuntErrors.BadBundle;
+		let Path = ValidBundle.path(forResource: FileName, ofType: "txt")
+		if let ValidPath = Path
+		{
+			let Content = try?String(contentsOfFile: ValidPath);
+			let EachLine = Content?.split(separator: "\n", omittingEmptySubsequences: false)
+			if let ValidEachLine = EachLine
+			{
+				return ValidEachLine
+			}
+			else
+			{
+				return []
+			}
+		}
+		
+		throw StarHuntErrors.MissingFile(FileName);
 	}
+	throw StarHuntErrors.BadBundle;
+}
+
+
+do {
+	try?Day1();
 } catch {
 	print(error);
 }

@@ -11,6 +11,9 @@
 		4C37A9502938AC3000775E03 /* Day1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A94F2938AC3000775E03 /* Day1.swift */; };
 		4C37A9592938AD7A00775E03 /* Day1-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A94E2938ABD800775E03 /* Day1-1.txt */; };
 		4C37A95D2938B37000775E03 /* Day1-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A95C2938B37000775E03 /* Day1-Sample.txt */; };
+		4C37A95F2939F38500775E03 /* Day2-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A95E2939F38500775E03 /* Day2-Sample.txt */; };
+		4C37A9632939F3DE00775E03 /* Day2-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A9622939F3DE00775E03 /* Day2-1.txt */; };
+		4C37A9652939F40000775E03 /* Day2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A9642939F40000775E03 /* Day2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +45,9 @@
 		4C37A94F2938AC3000775E03 /* Day1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day1.swift; sourceTree = "<group>"; };
 		4C37A9552938AD6E00775E03 /* StarHunt.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StarHunt.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C37A95C2938B37000775E03 /* Day1-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day1-Sample.txt"; sourceTree = "<group>"; };
+		4C37A95E2939F38500775E03 /* Day2-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day2-Sample.txt"; sourceTree = "<group>"; };
+		4C37A9622939F3DE00775E03 /* Day2-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day2-1.txt"; sourceTree = "<group>"; };
+		4C37A9642939F40000775E03 /* Day2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +92,9 @@
 				4C37A95C2938B37000775E03 /* Day1-Sample.txt */,
 				4C37A94E2938ABD800775E03 /* Day1-1.txt */,
 				4C37A94F2938AC3000775E03 /* Day1.swift */,
+				4C37A95E2939F38500775E03 /* Day2-Sample.txt */,
+				4C37A9622939F3DE00775E03 /* Day2-1.txt */,
+				4C37A9642939F40000775E03 /* Day2.swift */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -172,6 +181,8 @@
 			files = (
 				4C37A9592938AD7A00775E03 /* Day1-1.txt in Resources */,
 				4C37A95D2938B37000775E03 /* Day1-Sample.txt in Resources */,
+				4C37A9632939F3DE00775E03 /* Day2-1.txt in Resources */,
+				4C37A95F2939F38500775E03 /* Day2-Sample.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,6 +194,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C37A9502938AC3000775E03 /* Day1.swift in Sources */,
+				4C37A9652939F40000775E03 /* Day2.swift in Sources */,
 				4C37A9482938ABAE00775E03 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,23 +9,21 @@ import Foundation
 
 func Day1(_ StarBundle:Bundle) throws
 {
-	print("Let's a-read a-file!")
-	
 	let Path = StarBundle.path(forResource: "Day1-1", ofType: "txt")
 	if let ValidPath = Path
 	{
 		let Content = try?String(contentsOfFile: ValidPath);
 		let EachLine = Content?.split(separator: "\n", omittingEmptySubsequences: false)
 		
-		var MaxCalories = 0;
 		var TotalCalories = 0;
-		
+
+		var CaloryCounter = Array<Int>();
 		if let ValidInput = EachLine {
 			for Line in ValidInput
 			{
 				if Line.isEmpty
 				{
-					MaxCalories = max(MaxCalories, TotalCalories)
+					CaloryCounter.append(TotalCalories);
 					TotalCalories = 0
 				}
 				else
@@ -37,8 +35,9 @@ func Day1(_ StarBundle:Bundle) throws
 					}
 				}
 			}
-			MaxCalories = max(MaxCalories, TotalCalories)
-			print(MaxCalories)
+			CaloryCounter.append(TotalCalories);
+			let Ordered = CaloryCounter.sorted(by: { $0 > $1});
+			print(Ordered[0] + Ordered[1] + Ordered[2])
 		}
 	}
 	else

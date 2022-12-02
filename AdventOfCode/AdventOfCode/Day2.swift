@@ -36,6 +36,47 @@ func RockPaperTransform(_ Src:Substring) -> RockPaperScissor
 	return RockPaperScissor(RockAction.Nil, RockAction.Nil)
 }
 
+func RockPaperTransform2(_ Src:Substring) -> RockPaperScissor
+{
+	let Theirs = ["A":RockAction.Rock,"B":RockAction.Paper, "C":RockAction.Scissors]
+	
+	let WinAction = [	RockAction.Rock:RockAction.Scissors,
+						RockAction.Paper:RockAction.Rock,
+						RockAction.Scissors:RockAction.Paper]
+	
+	let LoseAction = [	RockAction.Scissors:RockAction.Rock,
+						RockAction.Rock:RockAction.Paper,
+						RockAction.Paper:RockAction.Scissors]
+	
+	
+	let Parts = Src.split(separator: " ")
+	if (Parts.count == 2) {
+		let TheirPlay = Parts[0];
+		let MyPlay = Parts[1];
+		
+		let TheirAction = Theirs[String(TheirPlay)] ?? RockAction.Nil;
+		var MyAction = RockAction.Nil
+		
+		if (MyPlay == "X")	// Lose
+		{
+			MyAction = WinAction[TheirAction] ?? RockAction.Nil
+		}
+		else if (MyPlay == "Y")	// Tie
+		{
+			MyAction = TheirAction
+		}
+		else if (MyPlay == "Z") // Win
+		{
+			MyAction = LoseAction[TheirAction] ?? RockAction.Nil
+		}
+		
+		return RockPaperScissor(TheirAction, MyAction)
+	}
+	
+	return RockPaperScissor(RockAction.Nil, RockAction.Nil)
+}
+
+
 func Score(player:RockAction, other:RockAction) -> Int
 {
 	if (player == RockAction.Nil || other == RockAction.Nil)
@@ -63,7 +104,9 @@ func Day2() throws
 	
 	if let ValidLines = EachLine
 	{
-		let Actions = ValidLines.map{ RockPaperTransform($0) }
+		let Actions = ValidLines.map{ RockPaperTransform2($0) }
+		
+		print (Actions)
 		
 		let SumScores = Actions.reduce(0, { $0 + Score(player:$1.1, other:$1.0)});
 		

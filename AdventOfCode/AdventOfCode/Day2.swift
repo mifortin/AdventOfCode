@@ -104,12 +104,16 @@ func Day2() throws
 	
 	if let ValidLines = EachLine
 	{
-		let Actions = ValidLines.map{ RockPaperTransform2($0) }
-		
-		print (Actions)
+		let Actions = ValidLines.map{ RockPaperTransform($0) }
 		
 		let SumScores = Actions.reduce(0, { $0 + Score(player:$1.1, other:$1.0)});
 		
 		print(SumScores)
+		
+		let ActionsPt2 = ValidLines.map{ RockPaperTransform2($0) }
+		
+		let SumScoresPt2 = ActionsPt2.reduce(0, { $0 + Score(player:$1.1, other:$1.0)});
+		
+		print(SumScoresPt2)
 	}
 }

@@ -17,6 +17,21 @@ let CurrentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectory
 let StarBundleURL = URL(fileURLWithPath: "StarHunt.bundle", relativeTo: CurrentDirectory);
 let StarBundle = Bundle(url: StarBundleURL);
 
+extension Sequence
+{
+	func For3(_ Callback:(Element, Element, Element) throws->Void) throws
+	{
+		var Iterator = makeIterator()
+		
+		while let A = Iterator.next() {
+			if let B = Iterator.next() {
+				if let C = Iterator.next() {
+					try Callback(A,B,C)
+				}
+			}
+		}
+	}
+}
 
 func ReadFile(_ FileName:String) throws -> Array<Substring>
 {
@@ -45,7 +60,9 @@ func ReadFile(_ FileName:String) throws -> Array<Substring>
 
 do {
 	//try?Day1();
-	try Day2();
+	//try Day2();
+	//try Day3();
+	try Day3Pt2();
 } catch {
 	print(error);
 }

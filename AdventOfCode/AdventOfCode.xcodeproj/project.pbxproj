@@ -14,6 +14,10 @@
 		4C37A95F2939F38500775E03 /* Day2-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A95E2939F38500775E03 /* Day2-Sample.txt */; };
 		4C37A9632939F3DE00775E03 /* Day2-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A9622939F3DE00775E03 /* Day2-1.txt */; };
 		4C37A9652939F40000775E03 /* Day2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A9642939F40000775E03 /* Day2.swift */; };
+		4C37A967293B0E2D00775E03 /* Day3-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A966293B0E2D00775E03 /* Day3-Sample.txt */; };
+		4C37A969293B0E3C00775E03 /* Day3-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A968293B0E3C00775E03 /* Day3-1.txt */; };
+		4C37A96B293B0E4F00775E03 /* Day3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A96A293B0E4F00775E03 /* Day3.swift */; };
+		4C37A96D293B9E5200775E03 /* Day3pt2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A96C293B9E5200775E03 /* Day3pt2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +52,10 @@
 		4C37A95E2939F38500775E03 /* Day2-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day2-Sample.txt"; sourceTree = "<group>"; };
 		4C37A9622939F3DE00775E03 /* Day2-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day2-1.txt"; sourceTree = "<group>"; };
 		4C37A9642939F40000775E03 /* Day2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day2.swift; sourceTree = "<group>"; };
+		4C37A966293B0E2D00775E03 /* Day3-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day3-Sample.txt"; sourceTree = "<group>"; };
+		4C37A968293B0E3C00775E03 /* Day3-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day3-1.txt"; sourceTree = "<group>"; };
+		4C37A96A293B0E4F00775E03 /* Day3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day3.swift; sourceTree = "<group>"; };
+		4C37A96C293B9E5200775E03 /* Day3pt2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day3pt2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +103,10 @@
 				4C37A95E2939F38500775E03 /* Day2-Sample.txt */,
 				4C37A9622939F3DE00775E03 /* Day2-1.txt */,
 				4C37A9642939F40000775E03 /* Day2.swift */,
+				4C37A966293B0E2D00775E03 /* Day3-Sample.txt */,
+				4C37A968293B0E3C00775E03 /* Day3-1.txt */,
+				4C37A96A293B0E4F00775E03 /* Day3.swift */,
+				4C37A96C293B9E5200775E03 /* Day3pt2.swift */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -180,7 +192,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C37A9592938AD7A00775E03 /* Day1-1.txt in Resources */,
+				4C37A967293B0E2D00775E03 /* Day3-Sample.txt in Resources */,
 				4C37A95D2938B37000775E03 /* Day1-Sample.txt in Resources */,
+				4C37A969293B0E3C00775E03 /* Day3-1.txt in Resources */,
 				4C37A9632939F3DE00775E03 /* Day2-1.txt in Resources */,
 				4C37A95F2939F38500775E03 /* Day2-Sample.txt in Resources */,
 			);
@@ -195,6 +209,8 @@
 			files = (
 				4C37A9502938AC3000775E03 /* Day1.swift in Sources */,
 				4C37A9652939F40000775E03 /* Day2.swift in Sources */,
+				4C37A96D293B9E5200775E03 /* Day3pt2.swift in Sources */,
+				4C37A96B293B0E4F00775E03 /* Day3.swift in Sources */,
 				4C37A9482938ABAE00775E03 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

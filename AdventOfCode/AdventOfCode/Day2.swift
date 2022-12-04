@@ -77,7 +77,7 @@ func RockPaperTransform2(_ Src:Substring) -> RockPaperScissor
 }
 
 
-func Score(player:RockAction, other:RockAction) -> Int
+func Day2Score(player:RockAction, other:RockAction) -> Int
 {
 	if (player == RockAction.Nil || other == RockAction.Nil)
 	{
@@ -100,20 +100,17 @@ func Score(player:RockAction, other:RockAction) -> Int
 
 func Day2() throws
 {
-	let EachLine = try?ReadFile("Day2-1")
+	let EachLine = try ReadFile("Day2-1")
 	
-	if let ValidLines = EachLine
-	{
-		let Actions = ValidLines.map{ RockPaperTransform($0) }
-		
-		let SumScores = Actions.reduce(0, { $0 + Score(player:$1.1, other:$1.0)});
-		
-		print(SumScores)
-		
-		let ActionsPt2 = ValidLines.map{ RockPaperTransform2($0) }
-		
-		let SumScoresPt2 = ActionsPt2.reduce(0, { $0 + Score(player:$1.1, other:$1.0)});
-		
-		print(SumScoresPt2)
-	}
+	let Actions = EachLine.map{ RockPaperTransform($0) }
+	
+	let SumScores = Actions.reduce(0, { $0 + Day2Score(player:$1.1, other:$1.0)});
+	
+	print(SumScores)
+	
+	let ActionsPt2 = EachLine.map{ RockPaperTransform2($0) }
+	
+	let SumScoresPt2 = ActionsPt2.reduce(0, { $0 + Day2Score(player:$1.1, other:$1.0)});
+	
+	print(SumScoresPt2)
 }

@@ -107,8 +107,6 @@ func Day3() throws
 				print(" >", Item, try Day3Char2Score(Item))
 				Sum += try Day3Char2Score(Item)
 			}
-			//let Score = try Day3Score(ArraySlice(SortedFirst), ArraySlice(SortedSecond))
-			//print (Score)
 		}
 	}
 	

@@ -62,7 +62,8 @@ do {
 	//try?Day1();
 	//try Day2();
 	//try Day3();
-	try Day3Pt2();
+	//try Day3Pt2();
+	try Day4()
 } catch {
 	print(error);
 }

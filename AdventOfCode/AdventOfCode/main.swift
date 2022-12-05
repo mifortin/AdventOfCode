@@ -19,7 +19,7 @@ let StarBundle = Bundle(url: StarBundleURL);
 
 extension Sequence
 {
-	func For3(_ Callback:(Element, Element, Element) throws->Void) throws
+	func For3(_ Callback:(Element, Element, Element) throws->Void, Skip:Int=0) throws
 	{
 		var Iterator = makeIterator()
 		
@@ -27,6 +27,13 @@ extension Sequence
 			if let B = Iterator.next() {
 				if let C = Iterator.next() {
 					try Callback(A,B,C)
+				}
+			}
+			
+			if (Skip > 0)
+			{
+				for _ in 1...Skip {
+					let _ = Iterator.next()
 				}
 			}
 		}
@@ -63,7 +70,8 @@ do {
 	//try Day2();
 	//try Day3();
 	//try Day3Pt2();
-	try Day4()
+	//try Day4()
+	try Day5()
 } catch {
 	print(error);
 }

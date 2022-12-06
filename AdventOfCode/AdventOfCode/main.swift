@@ -71,7 +71,8 @@ do {
 	//try Day3();
 	//try Day3Pt2();
 	//try Day4()
-	try Day5()
+	//try Day5()
+	try Day6()
 } catch {
 	print(error);
 }

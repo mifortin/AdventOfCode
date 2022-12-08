@@ -73,7 +73,8 @@ do {
 	//try Day4()
 	//try Day5()
 	//try Day6()
-	try Day7()
+	//try Day7()
+	try Day8()
 } catch {
 	print(error);
 }

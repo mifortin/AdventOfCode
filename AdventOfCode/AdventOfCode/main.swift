@@ -40,6 +40,19 @@ extension Sequence
 	}
 }
 
+extension SIMD2<Int>
+{
+	func Dot( _ Other:SIMD2<Int>) -> Int
+	{
+		return Other.x * x + Other.y * y
+	}
+	
+	func DistanceSq( _ Other:SIMD2<Int>) -> Int
+	{
+		return (Other.x - x) * (Other.x - x) + (Other.y - y) * (Other.y - y)
+	}
+}
+
 func ReadFile(_ FileName:String) throws -> Array<Substring>
 {
 	if let ValidBundle = StarBundle
@@ -74,7 +87,8 @@ do {
 	//try Day5()
 	//try Day6()
 	//try Day7()
-	try Day8()
+	//try Day8()
+	try Day9()
 } catch {
 	print(error);
 }

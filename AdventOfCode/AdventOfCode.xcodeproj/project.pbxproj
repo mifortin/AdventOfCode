@@ -40,6 +40,9 @@
 		4C37A9952943618700775E03 /* Day10-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A9942943618700775E03 /* Day10-Sample.txt */; };
 		4C37A9972943619000775E03 /* Day10-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A9962943619000775E03 /* Day10-1.txt */; };
 		4C37A9992943619F00775E03 /* Day10.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A9982943619F00775E03 /* Day10.swift */; };
+		4C37A99B2944EB9C00775E03 /* Day11.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A99A2944EB9C00775E03 /* Day11.swift */; };
+		4C37A99D2944EBAE00775E03 /* Day11-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A99C2944EBAE00775E03 /* Day11-Sample.txt */; };
+		4C37A99F2944EBBB00775E03 /* Day11-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A99E2944EBBB00775E03 /* Day11-1.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +103,9 @@
 		4C37A9942943618700775E03 /* Day10-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day10-Sample.txt"; sourceTree = "<group>"; };
 		4C37A9962943619000775E03 /* Day10-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day10-1.txt"; sourceTree = "<group>"; };
 		4C37A9982943619F00775E03 /* Day10.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day10.swift; sourceTree = "<group>"; };
+		4C37A99A2944EB9C00775E03 /* Day11.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day11.swift; sourceTree = "<group>"; };
+		4C37A99C2944EBAE00775E03 /* Day11-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day11-Sample.txt"; sourceTree = "<group>"; };
+		4C37A99E2944EBBB00775E03 /* Day11-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day11-1.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +179,9 @@
 				4C37A9942943618700775E03 /* Day10-Sample.txt */,
 				4C37A9962943619000775E03 /* Day10-1.txt */,
 				4C37A9982943619F00775E03 /* Day10.swift */,
+				4C37A99C2944EBAE00775E03 /* Day11-Sample.txt */,
+				4C37A99E2944EBBB00775E03 /* Day11-1.txt */,
+				4C37A99A2944EB9C00775E03 /* Day11.swift */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -268,8 +277,10 @@
 				4C37A95D2938B37000775E03 /* Day1-Sample.txt in Resources */,
 				4C37A9972943619000775E03 /* Day10-1.txt in Resources */,
 				4C37A969293B0E3C00775E03 /* Day3-1.txt in Resources */,
+				4C37A99F2944EBBB00775E03 /* Day11-1.txt in Resources */,
 				4C37A96F293C805D00775E03 /* Day4-Sample.txt in Resources */,
 				4C37A987294099F300775E03 /* Day8-Sample.txt in Resources */,
+				4C37A99D2944EBAE00775E03 /* Day11-Sample.txt in Resources */,
 				4C37A9952943618700775E03 /* Day10-Sample.txt in Resources */,
 				4C37A98929409A0000775E03 /* Day8-1.txt in Resources */,
 				4C37A97B293DE63A00775E03 /* Day6-Sample.txt in Resources */,
@@ -289,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C37A9502938AC3000775E03 /* Day1.swift in Sources */,
+				4C37A99B2944EB9C00775E03 /* Day11.swift in Sources */,
 				4C37A98B29409A1200775E03 /* Day8.swift in Sources */,
 				4C37A97F293DE66000775E03 /* Day6.swift in Sources */,
 				4C37A979293C88D000775E03 /* Day5.swift in Sources */,

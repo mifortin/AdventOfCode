@@ -43,6 +43,9 @@
 		4C37A99B2944EB9C00775E03 /* Day11.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A99A2944EB9C00775E03 /* Day11.swift */; };
 		4C37A99D2944EBAE00775E03 /* Day11-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A99C2944EBAE00775E03 /* Day11-Sample.txt */; };
 		4C37A99F2944EBBB00775E03 /* Day11-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A99E2944EBBB00775E03 /* Day11-1.txt */; };
+		4C37A9BB29460E7D00775E03 /* Day12.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C37A9BA29460E7D00775E03 /* Day12.swift */; };
+		4C37A9BD29460E8D00775E03 /* Day12-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A9BC29460E8D00775E03 /* Day12-Sample.txt */; };
+		4C37A9BF29460E9600775E03 /* Day12-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C37A9BE29460E9600775E03 /* Day12-1.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +109,9 @@
 		4C37A99A2944EB9C00775E03 /* Day11.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day11.swift; sourceTree = "<group>"; };
 		4C37A99C2944EBAE00775E03 /* Day11-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day11-Sample.txt"; sourceTree = "<group>"; };
 		4C37A99E2944EBBB00775E03 /* Day11-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day11-1.txt"; sourceTree = "<group>"; };
+		4C37A9BA29460E7D00775E03 /* Day12.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day12.swift; sourceTree = "<group>"; };
+		4C37A9BC29460E8D00775E03 /* Day12-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day12-Sample.txt"; sourceTree = "<group>"; };
+		4C37A9BE29460E9600775E03 /* Day12-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day12-1.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +188,9 @@
 				4C37A99C2944EBAE00775E03 /* Day11-Sample.txt */,
 				4C37A99E2944EBBB00775E03 /* Day11-1.txt */,
 				4C37A99A2944EB9C00775E03 /* Day11.swift */,
+				4C37A9BC29460E8D00775E03 /* Day12-Sample.txt */,
+				4C37A9BE29460E9600775E03 /* Day12-1.txt */,
+				4C37A9BA29460E7D00775E03 /* Day12.swift */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -270,8 +279,10 @@
 				4C37A985293F281C00775E03 /* Day7-1.txt in Resources */,
 				4C37A977293C88B900775E03 /* Day5-1.txt in Resources */,
 				4C37A9592938AD7A00775E03 /* Day1-1.txt in Resources */,
+				4C37A9BF29460E9600775E03 /* Day12-1.txt in Resources */,
 				4C37A975293C88A200775E03 /* Day5-Sample.txt in Resources */,
 				4C37A97D293DE64E00775E03 /* Day6-1.txt in Resources */,
+				4C37A9BD29460E8D00775E03 /* Day12-Sample.txt in Resources */,
 				4C37A983293F280A00775E03 /* Day7-Sample.txt in Resources */,
 				4C37A967293B0E2D00775E03 /* Day3-Sample.txt in Resources */,
 				4C37A95D2938B37000775E03 /* Day1-Sample.txt in Resources */,
@@ -310,6 +321,7 @@
 				4C37A98D2941B9D300775E03 /* Day9.swift in Sources */,
 				4C37A96D293B9E5200775E03 /* Day3pt2.swift in Sources */,
 				4C37A96B293B0E4F00775E03 /* Day3.swift in Sources */,
+				4C37A9BB29460E7D00775E03 /* Day12.swift in Sources */,
 				4C37A981293F27CA00775E03 /* Day7.swift in Sources */,
 				4C37A9482938ABAE00775E03 /* main.swift in Sources */,
 			);

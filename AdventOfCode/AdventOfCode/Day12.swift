@@ -99,11 +99,6 @@ func Day12() throws
 			{
 				let NewDist = DistanceTo(X,Y)
 				
-				if (NewDist == 0)
-				{
-					print(" \(X) - \(Y)")
-				}
-				
 				if NewDist != 0 {
 					MinDistance = min(MinDistance, NewDist)
 				}

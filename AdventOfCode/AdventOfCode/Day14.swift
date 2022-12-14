@@ -83,7 +83,7 @@ func Day14Sim(Coords:[[SIMD2<Int>]], FloorVariant:Bool) -> Int
 		
 		Grid[Start.y][Start.x] = "o"
 		
-		if (!FloorVariant || I % 1000 == 0 || Found == SandSource)
+		if (!FloorVariant || I % 10000 == 0 || Found == SandSource)
 		{
 			print("Iteration \(I)")
 			for G in Grid

@@ -51,6 +51,24 @@ extension SIMD2<Int>
 	{
 		return (Other.x - x) * (Other.x - x) + (Other.y - y) * (Other.y - y)
 	}
+	
+	func ComponentMin(_ Other:SIMD2<Int>) -> SIMD2<Int>
+	{
+		return SIMD2<Int>(Swift.min(x, Other.x), Swift.min(y,Other.y))
+	}
+	
+	func ComponentMax(_ Other:SIMD2<Int>) -> SIMD2<Int>
+	{
+		return SIMD2<Int>(Swift.max(x, Other.x), Swift.max(y,Other.y))
+	}
+}
+
+extension Int
+{
+	static func From( _ X:Substring) -> Int?
+	{
+		return Int(String(X))
+	}
 }
 
 func ReadFile(_ FileName:String) throws -> Array<Substring>
@@ -79,7 +97,7 @@ func ReadFile(_ FileName:String) throws -> Array<Substring>
 
 
 do {
-	try Day13()
+	try Day14()
 } catch {
 	print(error);
 }

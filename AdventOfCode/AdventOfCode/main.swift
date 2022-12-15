@@ -42,9 +42,19 @@ extension Sequence
 
 extension SIMD2<Int>
 {
+	init(_ X:Substring, _ Y:Substring)
+	{
+		self.init(Int.From(X)!, Int.From(Y)!)
+	}
+	
 	func Dot( _ Other:SIMD2<Int>) -> Int
 	{
 		return Other.x * x + Other.y * y
+	}
+	
+	func Manhattan( _ Other:SIMD2<Int>) -> Int
+	{
+		return abs(Other.x - x) + abs(Other.y - y)
 	}
 	
 	func DistanceSq( _ Other:SIMD2<Int>) -> Int
@@ -62,6 +72,8 @@ extension SIMD2<Int>
 		return SIMD2<Int>(Swift.max(x, Other.x), Swift.max(y,Other.y))
 	}
 }
+
+typealias Int2 = SIMD2<Int>
 
 extension Int
 {
@@ -97,7 +109,7 @@ func ReadFile(_ FileName:String) throws -> Array<Substring>
 
 
 do {
-	try Day14()
+	try Day15()
 } catch {
 	print(error);
 }

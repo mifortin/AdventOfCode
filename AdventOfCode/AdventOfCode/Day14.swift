@@ -55,7 +55,7 @@ func Day14Sim(Coords:[[SIMD2<Int>]], FloorVariant:Bool) -> Int
 	let Options = [SIMD2<Int>(0,1), SIMD2<Int>(-1,1), SIMD2<Int>(1,1)]
 	
 	var Pt1 = 0
-	var SandSource = SIMD2<Int>(500,0) &- Min
+	let SandSource = SIMD2<Int>(500,0) &- Min
 	for I in 1...
 	{
 		var Start = SandSource

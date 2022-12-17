@@ -15,25 +15,37 @@ struct Day16Dat
 	let Tunnels:[String]
 }
 
+struct Day16DatInt
+{
+	let Flow:Int
+	let Tunnels:[Int8]
+}
+
+struct Day16Key : Hashable
+{
+	let CurValve:Int8
+	let TimeElapsed:Int8
+	let Opened:Int64
+}
+
 struct Day16Tracker : CustomStringConvertible
 {
 	var description: String {
 		return "== \(TimeElapsed) == \(CurValve) == \(Actions.joined()) == \(Opened) == \(PressurePerTime) == \(TotalPressure)"
 	}
 	
-	let CurValve:String		// Our Locations
-	let TimeElapsed:Int
+	let CurValve:Int8		// Our Locations
+	let TimeElapsed:Int8
 	let Opened:Int64
 	let ClosedCnt:Int
 	let PressurePerTime:Int
 	let TotalPressure:Int
 	let Actions:Array<String>
 	
-	func GenKey() -> String
+	func GenKey() -> Day16Key
 	{
-		
-		if ClosedCnt == 0 { return "\(CurValve)\(TimeElapsed)" }
-		return "\(CurValve) \(Opened) \(TimeElapsed)"
+		if (ClosedCnt == 0) { return Day16Key(CurValve: 0, TimeElapsed: TimeElapsed, Opened: Opened) }
+		return Day16Key(CurValve: CurValve, TimeElapsed: TimeElapsed, Opened: Opened)
 	}
 }
 
@@ -56,12 +68,18 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 			= Day16Dat(Flow: L.Flow, Tunnels: Array(L.Tunnels[1...]))
 	}
 	
-	var String2Int = Dictionary<String,Int>()
-	var String2IntC = 0
+	var String2Int = Dictionary<String,Int8>()
+	var String2IntC:Int8 = 0
 	for G in Graph
 	{
 		String2Int[G.key] = String2IntC
 		String2IntC += 1
+	}
+	
+	var IGraph = Dictionary<Int8, Day16DatInt>()
+	for G in Graph
+	{
+		IGraph[String2Int[G.key]!] = Day16DatInt(Flow: G.value.Flow, Tunnels: G.value.Tunnels.map({ String2Int[$0]!}))
 	}
 	
 	let Flows = (Lines.map { $0.Flow }).sorted(by: >).filter( {$0 != 0} )
@@ -101,13 +119,13 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	//print("-- Span: \(MaxSpan) - Flows: \(SumFlows)")
 	
 	print(String(repeating: ".", count: TotalTime) )
-	var Cache = Dictionary<String, Int>()
-	var Actions:Deque = [Day16Tracker(CurValve: "AA", TimeElapsed: 0, Opened: 0, ClosedCnt: Graph.count, PressurePerTime: 0, TotalPressure: 0, Actions: [])]
+	var Cache = Dictionary<Day16Key, Int>()
+	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Graph.count, PressurePerTime: 0, TotalPressure: 0, Actions: [])]
 	
 	let AddAction = {
 		(ToAdd:Day16Tracker) in
 		let CacheKey = ToAdd.GenKey()
-		if ToAdd.TimeElapsed > MaxSpan && ToAdd.PressurePerTime < SumFlows[ToAdd.TimeElapsed / MaxSpan - 1]
+		if ToAdd.TimeElapsed > MaxSpan && ToAdd.PressurePerTime < SumFlows[Int(ToAdd.TimeElapsed) / MaxSpan - 1]
 		{
 			//print("SLOW \(Cur)")
 		}
@@ -146,9 +164,9 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 		// If we opened every valve, just do nothing...
 		if Cur.ClosedCnt != 0
 		{
-			let Tunnels = Graph[Cur.CurValve]!
+			let Tunnels = IGraph[Cur.CurValve]!
 			
-			let ValveIndex = String2Int[Cur.CurValve]!
+			let ValveIndex = Cur.CurValve
 			if Tunnels.Flow > 0 && (Cur.Opened & (1 << ValveIndex)) == 0
 			{
 				AddAction(Day16Tracker(CurValve: Cur.CurValve,

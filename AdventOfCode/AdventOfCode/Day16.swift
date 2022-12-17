@@ -118,6 +118,9 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	
 	//print("-- Span: \(MaxSpan) - Flows: \(SumFlows)")
 	
+	var FoundTime = 0
+	var Elements = 0
+	
 	print(String(repeating: ".", count: TotalTime) )
 	var Cache = Dictionary<Day16Key, Int>()
 	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Graph.count, PressurePerTime: 0, TotalPressure: 0, Actions: [])]
@@ -125,6 +128,18 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	let AddAction = {
 		(ToAdd:Day16Tracker) in
 		let CacheKey = ToAdd.GenKey()
+		
+		if ToAdd.TimeElapsed > FoundTime
+		{
+			FoundTime += 1
+			//print("Minute \(FoundTime) @ \(Elements)")
+			print("=", terminator: "")
+			Elements = 0
+			
+			// Reset - we changed minute.
+			Cache = Dictionary<Day16Key, Int>()
+		}
+		
 		if ToAdd.TimeElapsed > MaxSpan && ToAdd.PressurePerTime < SumFlows[Int(ToAdd.TimeElapsed) / MaxSpan - 1]
 		{
 			//print("SLOW \(Cur)")
@@ -136,8 +151,6 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 		}
 	}
 	
-	var FoundTime = 0
-	var Elements = 0
 	while Actions.count != 0
 	{
 		let Cur = Actions.popLast()!
@@ -148,13 +161,6 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 			break
 		}
 		
-		if Cur.TimeElapsed > FoundTime
-		{
-			FoundTime += 1
-			//print("Minute \(FoundTime) @ \(Elements)")
-			print("=", terminator: "")
-			Elements = 0
-		}
 		Elements += 1
 		
 		// If we are worse than the cache...

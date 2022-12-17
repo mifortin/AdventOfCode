@@ -24,7 +24,7 @@ struct Day16DatInt
 struct Day16Key : Hashable
 {
 	let Combined:Int32
-	let Opened:Int64
+	let Opened:Int16
 }
 
 struct Day16Tracker : CustomStringConvertible
@@ -36,10 +36,12 @@ struct Day16Tracker : CustomStringConvertible
 	let CurValve:Int8		// Our Locations
 	let EValve:Int8
 	let TimeElapsed:Int8
-	let Opened:Int64
+	let Opened:Int16
 	let ClosedCnt:Int8
 	let PressurePerTime:Int16
 	let TotalPressure:Int16
+	let Travel:Int64		// Where we've gone without opening a valve.  To avoid backtracking.
+	let ETravel:Int64
 	
 	func GenKey() -> Day16Key
 	{
@@ -71,12 +73,26 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 			= Day16Dat(Flow: L.Flow, Tunnels: Array(L.Tunnels[1...]))
 	}
 	
+	// The ones with flow go first; should allow us to reduce memory usage
+	// greatly (Int64 -> Int16)
 	var String2Int = Dictionary<String,Int8>()
 	var String2IntC:Int8 = 0
 	for G in Graph
 	{
-		String2Int[G.key] = String2IntC
-		String2IntC += 1
+		if G.value.Flow > 0
+		{
+			String2Int[G.key] = String2IntC
+			String2IntC += 1
+		}
+	}
+	//print(String2IntC)
+	for G in Graph
+	{
+		if G.value.Flow == 0
+		{
+			String2Int[G.key] = String2IntC
+			String2IntC += 1
+		}
 	}
 	
 	var IGraph = Dictionary<Int8, Day16DatInt>()
@@ -134,7 +150,7 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	
 	print(String(repeating: ".", count: TotalTime) )
 	var Cache = Dictionary<Day16Key, Int16>()
-	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, EValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Int8(NumValves), PressurePerTime: 0, TotalPressure: 0)]
+	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, EValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Int8(NumValves), PressurePerTime: 0, TotalPressure: 0, Travel: 0, ETravel: 0)]
 	let MaxFlow = SumFlows.last!
 	
 	// By the end; we can estimate what the total score will be.  If it's less
@@ -142,6 +158,10 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	//
 	// This only makes sense once one path has opened all the valves
 	var MaxPotential:Int16 = 0
+	
+	// Opposed to max; can be run at all times to isolate elements that can't
+	// compete.  Computed by assuming - if we do nothing, what's the score?
+	var MinPotential:Int16 = 0
 	
 	let AddAction = {
 		(ToAdd:Day16Tracker) in
@@ -193,18 +213,25 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 											Opened: ToAdd.Opened | (1 << ValveIndex),
 											ClosedCnt: ToAdd.ClosedCnt - 1,
 											PressurePerTime: ToAdd.PressurePerTime + Tunnels.Flow,
-											TotalPressure: ToAdd.TotalPressure))
+											TotalPressure: ToAdd.TotalPressure,
+									 	    Travel: ToAdd.Travel,
+										    ETravel: 0))
 				}
 				
 				for T in Tunnels.Tunnels
 				{
-					AddAction(Day16Tracker(CurValve: ToAdd.CurValve,
-											EValve: T,
-											TimeElapsed: ToAdd.TimeElapsed,
-											Opened: ToAdd.Opened,
-											ClosedCnt: ToAdd.ClosedCnt,
-											PressurePerTime: ToAdd.PressurePerTime,
-											TotalPressure: ToAdd.TotalPressure))
+					if ToAdd.ETravel & (1 << T) == 0
+					{
+						AddAction(Day16Tracker(CurValve: ToAdd.CurValve,
+											   EValve: T,
+											   TimeElapsed: ToAdd.TimeElapsed,
+											   Opened: ToAdd.Opened,
+											   ClosedCnt: ToAdd.ClosedCnt,
+											   PressurePerTime: ToAdd.PressurePerTime,
+											   TotalPressure: ToAdd.TotalPressure,
+											   Travel: ToAdd.Travel,
+											   ETravel: ToAdd.ETravel | (1 << T)))
+					}
 				}
 			}
 			else
@@ -234,7 +261,11 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 		
 		let RemainingTime:Int16 = Int16(TotalTime) - Int16(Cur.TimeElapsed)
 		let Potential = RemainingTime * MaxFlow + Cur.TotalPressure
-		if Potential >= MaxPotential
+		
+		let LazyPotential = RemainingTime * Cur.PressurePerTime + Cur.TotalPressure
+		MinPotential = max(LazyPotential, MinPotential)
+		
+		if Potential >= MaxPotential && Potential >= MinPotential
 		{
 			if Cur.ClosedCnt != 0
 			{
@@ -249,18 +280,25 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 											Opened: Cur.Opened | (1 << ValveIndex),
 											ClosedCnt: Cur.ClosedCnt - 1,
 											PressurePerTime: Cur.PressurePerTime + Int16(Tunnels.Flow),
-											TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
+											TotalPressure: Cur.PressurePerTime + Cur.TotalPressure,
+											Travel: 0,
+											ETravel: Cur.ETravel))
 				}
 				
 				for T in Tunnels.Tunnels
 				{
-					AddEAction(Day16Tracker(CurValve: T,
-											EValve: Cur.EValve,
-											TimeElapsed: Cur.TimeElapsed+1,
-											Opened: Cur.Opened,
-											ClosedCnt: Cur.ClosedCnt,
-											PressurePerTime: Cur.PressurePerTime,
-											TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
+					if Cur.Travel & (1 << T) == 0
+					{
+						AddEAction(Day16Tracker(CurValve: T,
+												EValve: Cur.EValve,
+												TimeElapsed: Cur.TimeElapsed+1,
+												Opened: Cur.Opened,
+												ClosedCnt: Cur.ClosedCnt,
+												PressurePerTime: Cur.PressurePerTime,
+												TotalPressure: Cur.PressurePerTime + Cur.TotalPressure,
+												Travel: Cur.Travel | (1 << T),
+												ETravel: Cur.ETravel))
+					}
 				}
 			}
 			else
@@ -272,7 +310,9 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 									   Opened: Cur.Opened,
 									   ClosedCnt: Cur.ClosedCnt,
 									   PressurePerTime: Cur.PressurePerTime,
-									   TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
+									   TotalPressure: Cur.PressurePerTime + Cur.TotalPressure,
+									   Travel: Cur.Travel,
+									   ETravel: Cur.ETravel))
 			}
 		}
 	}

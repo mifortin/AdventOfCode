@@ -11,21 +11,19 @@ import OrderedCollections
 
 struct Day16Dat
 {
-	let Flow:Int
+	let Flow:Int16
 	let Tunnels:[String]
 }
 
 struct Day16DatInt
 {
-	let Flow:Int
+	let Flow:Int16
 	let Tunnels:[Int8]
 }
 
 struct Day16Key : Hashable
 {
-	let CurValve:Int8
-	let EValve:Int8
-	let TimeElapsed:Int8
+	let Combined:Int32
 	let Opened:Int64
 }
 
@@ -39,14 +37,18 @@ struct Day16Tracker : CustomStringConvertible
 	let EValve:Int8
 	let TimeElapsed:Int8
 	let Opened:Int64
-	let ClosedCnt:Int
-	let PressurePerTime:Int
-	let TotalPressure:Int
+	let ClosedCnt:Int8
+	let PressurePerTime:Int16
+	let TotalPressure:Int16
 	
 	func GenKey() -> Day16Key
 	{
-		if (ClosedCnt == 0) { return Day16Key(CurValve: 0, EValve: 0, TimeElapsed: TimeElapsed, Opened: Opened) }
-		return Day16Key(CurValve: min(CurValve, EValve), EValve: max(CurValve,EValve), TimeElapsed: TimeElapsed, Opened: Opened)
+		if (ClosedCnt == 0) { return Day16Key(Combined: Int32(TimeElapsed), Opened: Opened) }
+		
+		let MinValve = min(CurValve, EValve)
+		let MaxValve = max(CurValve,EValve)
+		
+		return Day16Key(Combined: Int32(TimeElapsed) + 256*Int32(MinValve) + 256*256*Int32(MaxValve), Opened: Opened)
 	}
 }
 
@@ -59,7 +61,7 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 		let Valves = $0.matches(of: ValveRex)
 		let Flow = $0.matches(of: FlowRex)
 		
-		return Day16Dat(Flow: Int.From(Flow[0].Flow)!, Tunnels: Valves.map({ String($0.Valve)}))
+		return Day16Dat(Flow: Int16(Int.From(Flow[0].Flow)!), Tunnels: Valves.map({ String($0.Valve)}))
 	})
 	
 	var Graph = Dictionary<String, Day16Dat>()
@@ -84,7 +86,7 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	}
 	
 	let Flows = (Lines.map { $0.Flow }).sorted(by: >).filter( {$0 != 0} )
-	var SumFlows = [Int]()
+	var SumFlows = [Int16]()
 	for I in 0..<Flows.count
 	{
 		SumFlows.append( Flows[...I].reduce(0, +))
@@ -129,8 +131,8 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	var Elements = 0
 	
 	print(String(repeating: ".", count: TotalTime) )
-	var Cache = Dictionary<Day16Key, Int>()
-	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, EValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Graph.count, PressurePerTime: 0, TotalPressure: 0)]
+	var Cache = Dictionary<Day16Key, Int16>()
+	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, EValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Int8(Graph.count), PressurePerTime: 0, TotalPressure: 0)]
 	
 	let AddAction = {
 		(ToAdd:Day16Tracker) in
@@ -144,7 +146,7 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 			Elements = 0
 			
 			// Reset - we changed minute. (performance noticably degrades as it gets full)
-			Cache = Dictionary<Day16Key, Int>()
+			Cache = Dictionary<Day16Key, Int16>()
 		}
 		
 		let FlowInd = min(Int(ToAdd.TimeElapsed) / MaxSpan - 1, SumFlows.count-1)
@@ -232,7 +234,7 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 									   TimeElapsed: Cur.TimeElapsed+1,
 									   Opened: Cur.Opened | (1 << ValveIndex),
 									   ClosedCnt: Cur.ClosedCnt - 1,
-									   PressurePerTime: Cur.PressurePerTime + Tunnels.Flow,
+									   PressurePerTime: Cur.PressurePerTime + Int16(Tunnels.Flow),
 									   TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
 			}
 			
@@ -261,7 +263,7 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	
 	print()
 	print()
-	var Max = 0
+	var Max:Int16 = 0
 	for C in Actions{
 		//print(C, C.GenKey())
 		Max = max(C.TotalPressure, Max)

@@ -10,14 +10,15 @@ import DequeModule
 
 func Day17(_ File:String) throws
 {
-	let Lines = try ReadFile(File)[0]
+	let Lines = try ReadFile(File).joined()
 	
-	print(Lines.count)
+	//print(Lines.count)
 	
 	var LineIndex = 0
 	let Read = { ()->Character in
 		let CurIndex = LineIndex
 		LineIndex = (LineIndex + 1) % Lines.count
+		//print(Lines[Lines.index(Lines.startIndex, offsetBy: CurIndex)], terminator: "")
 		return Lines[Lines.index(Lines.startIndex, offsetBy: CurIndex)]
 	}
 	
@@ -86,16 +87,16 @@ func Day17(_ File:String) throws
 		
 		let WriteRock = {
 			(DoShow:Bool) in
-			var OX = CurX
 			var OY = CurY
 			for L in CurRock
 			{
-				OX = CurX
+				var OX = CurX
 				for C in L
 				{
 					if C != "."
 					{
-						if (PlayField[OY][OX] != ".")
+						if ((DoShow && PlayField[OY][OX] != ".")
+							|| (!DoShow && PlayField[OY][OX] != C))
 						{
 							print("ERROR!")
 						}
@@ -109,9 +110,10 @@ func Day17(_ File:String) throws
 		
 		let ShowState = {
 			WriteRock(true)
-			ShowPlayField()
+			//ShowPlayField()
 			WriteRock(false)
 		}
+		//ShowState()
 		
 		while (true)
 		{
@@ -125,11 +127,10 @@ func Day17(_ File:String) throws
 				}
 				let NY = CurY + Dy
 				
-				var OX = NX
 				var OY = NY
 				for L in CurRock
 				{
-					OX = NX
+					var OX = NX
 					for C in L
 					{
 						if C != "." && PlayField[OY][OX] != "."
@@ -148,17 +149,22 @@ func Day17(_ File:String) throws
 			{
 				print("ERROR")
 			}
+			if (!TryPlace(0,0))
+			{
+				print("ERROR!")
+			}
+			
 			//print(Dir)
 			if (TryPlace(Dir, 0))
 			{
 				CurX += Dir
-				//ShowState()
+				ShowState()
 			}
 			
 			if (TryPlace(0, 1))
 			{
 				CurY += 1
-				//ShowState()
+				ShowState()
 			}
 			else
 			{
@@ -168,13 +174,13 @@ func Day17(_ File:String) throws
 		
 		WriteRock(true)
 		
-		while PlayField[0] == Empty
+		while PlayField[0].reduce(0, { $0 + ($1 == "." ? 1 : 0)}) == 7
 		{
 			_ = PlayField.popFirst()
 		}
 	}
 	
-	ShowPlayField()
+	//ShowPlayField()
 	
 	print()
 	print (PlayField.count-1)
@@ -182,6 +188,8 @@ func Day17(_ File:String) throws
 
 func Day17() throws
 {
-	//try Day17("Day17-Sample")
+	
+	 try Day17("Day17-Sample")
+	//try Day17("Day17-Test")
 	try Day17("Day17-1") // 3159 too high
 }

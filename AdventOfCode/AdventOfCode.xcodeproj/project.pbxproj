@@ -65,6 +65,7 @@
 		4CBF62C7294E16DF000DD16B /* Day17.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBF62C6294E16DF000DD16B /* Day17.swift */; };
 		4CBF62C9294E16FC000DD16B /* Day17-Sample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CBF62C8294E16FC000DD16B /* Day17-Sample.txt */; };
 		4CBF62CB294E1709000DD16B /* Day17-1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CBF62CA294E1709000DD16B /* Day17-1.txt */; };
+		4CBF62CD294E3024000DD16B /* Day17-Test.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CBF62CC294E3024000DD16B /* Day17-Test.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +147,7 @@
 		4CBF62C6294E16DF000DD16B /* Day17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day17.swift; sourceTree = "<group>"; };
 		4CBF62C8294E16FC000DD16B /* Day17-Sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day17-Sample.txt"; sourceTree = "<group>"; };
 		4CBF62CA294E1709000DD16B /* Day17-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day17-1.txt"; sourceTree = "<group>"; };
+		4CBF62CC294E3024000DD16B /* Day17-Test.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Day17-Test.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -241,6 +243,7 @@
 				4CBF62B6294B3AC5000DD16B /* Day16-Sample.txt */,
 				4CBF62B8294B3AD1000DD16B /* Day16-1.txt */,
 				4CBF62B4294B3AB0000DD16B /* Day16.swift */,
+				4CBF62CC294E3024000DD16B /* Day17-Test.txt */,
 				4CBF62C8294E16FC000DD16B /* Day17-Sample.txt */,
 				4CBF62CA294E1709000DD16B /* Day17-1.txt */,
 				4CBF62C6294E16DF000DD16B /* Day17.swift */,
@@ -369,6 +372,7 @@
 				4C37A9DC294724DF00775E03 /* Day13-Sample.txt in Resources */,
 				4C37A9912941BA3A00775E03 /* Day9-1.txt in Resources */,
 				4CBF62C9294E16FC000DD16B /* Day17-Sample.txt in Resources */,
+				4CBF62CD294E3024000DD16B /* Day17-Test.txt in Resources */,
 				4C37A98F2941BA2C00775E03 /* Day9-Sample.txt in Resources */,
 				4C37A95F2939F38500775E03 /* Day2-Sample.txt in Resources */,
 				4C37A9932943525D00775E03 /* Day9-Sample2.txt in Resources */,

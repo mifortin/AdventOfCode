@@ -8,138 +8,171 @@
 import Foundation
 import DequeModule
 
-func Day17(_ File:String, Iterations:Int, Width:Int) throws
+func Day17(_ File:String, Iterations: Int) throws
 {
-	let Lines = try ReadFile(File).joined().map( {
-		if $0 == ">" { return 1 }
-		if $0 == "<" { return -1 }
-		print("BAD INPUT \($0)")
-		return 0
-	})
+	let Lines = try ReadFile(File).joined()
 	
-	let MaxHeight = Iterations * 3		// Good enough estimate
+	//print(Lines.count)
 	
-	let Rocks:[[[Int]]] = [
-		[	"####"	],
-		
-		[	".#.",
-			"###",
-			".#."	],
-		
-		[	"..#",
-			"..#",
-			"###"	],
-		
-		[	"#","#","#","#" ],
-		
-		[	"##", "##"	]
-	].map( { $0.map( { $0.map( { $0 == "#" ? 1 : 0} ) } ) } )
-	
-	let EmptyRow = Array(repeating: 0, count: Width)
-	var Level = Array(repeating: EmptyRow, count: MaxHeight)
-	
-	var StartRow = Level.count
-	let StartColumn = 2
-	var CurInput = 0
-	
-	let Intersects = {
-		(R:[[Int]], L:Int, B:Int) -> Bool in
-		
-		for Y in 0..<R.count
-		{
-			for X in 0..<R[0].count
-			{
-				if Level[B-Y][L+X] != 0
-				{
-					if R[R.count - Y - 1][X] != 0
-					{
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false
+	var LineIndex = 0
+	let Read = { ()->Character in
+		let CurIndex = LineIndex
+		LineIndex = (LineIndex + 1) % Lines.count
+		//print(Lines[Lines.index(Lines.startIndex, offsetBy: CurIndex)], terminator: "")
+		return Lines[Lines.index(Lines.startIndex, offsetBy: CurIndex)]
 	}
+	
+	let ReadOffset = {
+		() -> Int in
+		let L = Read()
+		return L == "<" ? -1 : (L == ">" ? 1 : 0)
+	}
+	
+	let Rocks = [
+		[
+			"===="
+		],
+		[
+			".+.",
+			"+++",
+			".+."
+		],
+		[
+			"..*",
+			"..*",
+			"***"
+		],
+		[
+			"|",
+			"|",
+			"|",
+			"|"
+		],
+		[
+			"XX",
+			"XX"
+		]
+	]
+	
+	let Empty = Array(repeating: Character("."), count: 7)
+	let Base = Array(repeating: Character("-"), count: 7)
+	
+	var PlayField = Deque<Array<Character> >()
+	PlayField.append(Base)
+	let AddEmptyLines = {
+		(NumLines:Int) in
+		for _ in 1...NumLines
+		{
+			PlayField.insert(Empty, at: 0)
+		}
+	}
+	
+	let ShowPlayField = {
+		for X in PlayField
+		{
+			print("|\(String(X))|")
+		}
+		print()
+	}
+	
+	print(String(repeating: ".", count: 100))
+	let Checkpoint = Iterations/100
 	
 	for I in 0..<Iterations
 	{
-		let R = Rocks[I % Rocks.count]
+		if I % Checkpoint == 0
+		{
+			print("=", terminator: "")
+		}
 		
-		var Height = StartRow-4	// From bottom
-		var Left = StartColumn	// From left
+		let CurRock = Rocks[I % Rocks.count]
+		var CurX = 2
+		var CurY = 0
 		
-		let DebugDisplay = {
-			if (false)
+		AddEmptyLines(3)
+		//ShowPlayField()
+		AddEmptyLines(CurRock.count)
+		
+		let WriteRock = {
+			(DoShow:Bool) in
+			var OY = CurY
+			for L in CurRock
 			{
-				for Y in 0..<R.count
+				var OX = CurX
+				for C in L
 				{
-					for X in 0..<R[0].count
+					if C != "."
 					{
-						if R[R.count - Y - 1][X] != 0
+						if ((DoShow && PlayField[OY][OX] != ".")
+							|| (!DoShow && PlayField[OY][OX] != C))
 						{
-							if Level[Height-Y][Left+X] == 0
-							{
-								Level[Height-Y][Left+X] = I + 1
-							}
-							else
-							{
-								print("COPY ERROR")
-							}
+							print("ERROR!")
 						}
+						PlayField[OY][OX] = DoShow ? C : "."
 					}
+					OX += 1
 				}
-				
-				print()
-				print("== \(I) ==")
-				for X in Level[(Height-R.count+1)...]
-				{
-					print(X.map( { $0 == 0 ? "." : String($0 % 10) } ) .joined())
-					
-				}
-				for Y in 0..<R.count
-				{
-					for X in 0..<R[0].count
-					{
-						if R[R.count - Y - 1][X] != 0
-						{
-							if Level[Height-Y][Left+X] == I + 1
-							{
-								Level[Height-Y][Left+X] = 0
-							}
-							else
-							{
-								print("COPY ERROR")
-							}
-						}
-					}
-				}
+				OY += 1
 			}
 		}
-		DebugDisplay();
 		
-		while(true)
+		let ShowState = {
+			WriteRock(true)
+			//ShowPlayField()
+			WriteRock(false)
+		}
+		//ShowState()
+		
+		while (true)
 		{
-			let NextOp = Lines[CurInput % Lines.count]
-			CurInput += 1
-			
-			if (Left + NextOp >= 0 && Left + NextOp + R[0].count <= Width)
-			{
-				if !Intersects(R, Left+NextOp, Height)
+			let TryPlace = {
+				(Dx:Int, Dy:Int) -> Bool in
+				
+				let NX = min(max(CurX + Dx, 0),7 - CurRock[0].count)
+				if NX != CurX + Dx
 				{
-					Left += NextOp
-					DebugDisplay()
+					return false
 				}
+				let NY = CurY + Dy
+				
+				var OY = NY
+				for L in CurRock
+				{
+					var OX = NX
+					for C in L
+					{
+						if C != "." && PlayField[OY][OX] != "."
+						{
+							return false
+						}
+						OX += 1
+					}
+					OY += 1
+				}
+				return true
 			}
 			
-			if Height + 1 == Level.count
+			let Dir = ReadOffset()
+			if (Dir == 0)
 			{
-				break
+				print("ERROR")
 			}
-			if !Intersects(R, Left, Height+1)
+			if (!TryPlace(0,0))
 			{
-				Height += 1
-				DebugDisplay()
+				print("ERROR!")
+			}
+			
+			//print(Dir)
+			if (TryPlace(Dir, 0))
+			{
+				CurX += Dir
+				ShowState()
+			}
+			
+			if (TryPlace(0, 1))
+			{
+				CurY += 1
+				ShowState()
 			}
 			else
 			{
@@ -147,34 +180,29 @@ func Day17(_ File:String, Iterations:Int, Width:Int) throws
 			}
 		}
 		
-		for Y in 0..<R.count
-		{
-			for X in 0..<R[0].count
-			{
-				if R[R.count - Y - 1][X] != 0
-				{
-					if Level[Height-Y][Left+X] == 0
-					{
-						Level[Height-Y][Left+X] = I + 1
-					}
-					else
-					{
-						print("COPY ERROR")
-					}
-				}
-			}
-		}
+		WriteRock(true)
 		
-		StartRow = min(StartRow, Height - R.count + 1)
+		while PlayField[0].reduce(0, { $0 + ($1 == "." ? 1 : 0)}) == 7
+		{
+			_ = PlayField.popFirst()
+		}
 	}
 	
-	print(Level.count - StartRow)
+	//ShowPlayField()
+	
+	print()
+	print ( "\(File) @ \(Iterations) = \(PlayField.count-1)")
 }
 
 func Day17() throws
 {
 	
-	try Day17("Day17-Sample", Iterations:2022, Width:7)
+	try Day17("Day17-Sample", Iterations: 2022)
 	//try Day17("Day17-Test")
-	try Day17("Day17-1", Iterations: 2022, Width: 7) // 3159 too high
+	try Day17("Day17-1", Iterations: 2022) // 3159 was perfect...
+	
+	
+	try Day17("Day17-Sample", Iterations: 1000000000000)
+	//try Day17("Day17-Test")
+	try Day17("Day17-1", Iterations: 1000000000000)
 }

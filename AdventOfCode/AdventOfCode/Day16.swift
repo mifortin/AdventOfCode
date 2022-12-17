@@ -125,6 +125,8 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 		}
 	}
 	
+	let NumValves = Graph.reduce(0, { $0 + (($1.value.Flow > 0) ? 1 : 0) })
+	
 	//print("-- Span: \(MaxSpan) - Flows: \(SumFlows)")
 	
 	var FoundTime = 0
@@ -132,7 +134,14 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 	
 	print(String(repeating: ".", count: TotalTime) )
 	var Cache = Dictionary<Day16Key, Int16>()
-	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, EValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Int8(Graph.count), PressurePerTime: 0, TotalPressure: 0)]
+	var Actions:Deque = [Day16Tracker(CurValve: String2Int["AA"]!, EValve: String2Int["AA"]!, TimeElapsed: 0, Opened: 0, ClosedCnt: Int8(NumValves), PressurePerTime: 0, TotalPressure: 0)]
+	let MaxFlow = SumFlows.last!
+	
+	// By the end; we can estimate what the total score will be.  If it's less
+	// than the max of another path then drop this path.
+	//
+	// This only makes sense once one path has opened all the valves
+	var MaxPotential:Int16 = 0
 	
 	let AddAction = {
 		(ToAdd:Day16Tracker) in
@@ -222,25 +231,42 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 		//print(Cur)
 		
 		// If we opened every valve, just do nothing...
-		if Cur.ClosedCnt != 0
+		
+		let RemainingTime:Int16 = Int16(TotalTime) - Int16(Cur.TimeElapsed)
+		let Potential = RemainingTime * MaxFlow + Cur.TotalPressure
+		if Potential >= MaxPotential
 		{
-			let Tunnels = IGraph[Cur.CurValve]!
-			
-			let ValveIndex = Cur.CurValve
-			if Tunnels.Flow > 0 && (Cur.Opened & (1 << ValveIndex)) == 0
+			if Cur.ClosedCnt != 0
 			{
-				AddEAction(Day16Tracker(CurValve: Cur.CurValve,
-									   EValve: Cur.EValve,
-									   TimeElapsed: Cur.TimeElapsed+1,
-									   Opened: Cur.Opened | (1 << ValveIndex),
-									   ClosedCnt: Cur.ClosedCnt - 1,
-									   PressurePerTime: Cur.PressurePerTime + Int16(Tunnels.Flow),
-									   TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
+				let Tunnels = IGraph[Cur.CurValve]!
+				
+				let ValveIndex = Cur.CurValve
+				if Tunnels.Flow > 0 && (Cur.Opened & (1 << ValveIndex)) == 0
+				{
+					AddEAction(Day16Tracker(CurValve: Cur.CurValve,
+											EValve: Cur.EValve,
+											TimeElapsed: Cur.TimeElapsed+1,
+											Opened: Cur.Opened | (1 << ValveIndex),
+											ClosedCnt: Cur.ClosedCnt - 1,
+											PressurePerTime: Cur.PressurePerTime + Int16(Tunnels.Flow),
+											TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
+				}
+				
+				for T in Tunnels.Tunnels
+				{
+					AddEAction(Day16Tracker(CurValve: T,
+											EValve: Cur.EValve,
+											TimeElapsed: Cur.TimeElapsed+1,
+											Opened: Cur.Opened,
+											ClosedCnt: Cur.ClosedCnt,
+											PressurePerTime: Cur.PressurePerTime,
+											TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
+				}
 			}
-			
-			for T in Tunnels.Tunnels
+			else
 			{
-				AddEAction(Day16Tracker(CurValve: T,
+				MaxPotential = max(Potential, MaxPotential)
+				AddAction(Day16Tracker(CurValve: Cur.CurValve,
 									   EValve: Cur.EValve,
 									   TimeElapsed: Cur.TimeElapsed+1,
 									   Opened: Cur.Opened,
@@ -248,16 +274,6 @@ func Day16(_ File:String, _ TotalTime:Int, _ Players:Int) throws
 									   PressurePerTime: Cur.PressurePerTime,
 									   TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
 			}
-		}
-		else
-		{
-			AddAction(Day16Tracker(CurValve: Cur.CurValve,
-								   EValve: Cur.EValve,
-								   TimeElapsed: Cur.TimeElapsed+1,
-								   Opened: Cur.Opened,
-								   ClosedCnt: Cur.ClosedCnt,
-								   PressurePerTime: Cur.PressurePerTime,
-								   TotalPressure: Cur.PressurePerTime + Cur.TotalPressure))
 		}
 	}
 	

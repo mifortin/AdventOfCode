@@ -8,163 +8,138 @@
 import Foundation
 import DequeModule
 
-func Day17(_ File:String) throws
+func Day17(_ File:String, Iterations:Int, Width:Int) throws
 {
-	let Lines = try ReadFile(File).joined()
+	let Lines = try ReadFile(File).joined().map( {
+		if $0 == ">" { return 1 }
+		if $0 == "<" { return -1 }
+		print("BAD INPUT \($0)")
+		return 0
+	})
 	
-	//print(Lines.count)
+	let MaxHeight = Iterations * 3		// Good enough estimate
 	
-	var LineIndex = 0
-	let Read = { ()->Character in
-		let CurIndex = LineIndex
-		LineIndex = (LineIndex + 1) % Lines.count
-		//print(Lines[Lines.index(Lines.startIndex, offsetBy: CurIndex)], terminator: "")
-		return Lines[Lines.index(Lines.startIndex, offsetBy: CurIndex)]
-	}
+	let Rocks:[[[Int]]] = [
+		[	"####"	],
+		
+		[	".#.",
+			"###",
+			".#."	],
+		
+		[	"..#",
+			"..#",
+			"###"	],
+		
+		[	"#","#","#","#" ],
+		
+		[	"##", "##"	]
+	].map( { $0.map( { $0.map( { $0 == "#" ? 1 : 0} ) } ) } )
 	
-	let ReadOffset = {
-		() -> Int in
-		let L = Read()
-		return L == "<" ? -1 : (L == ">" ? 1 : 0)
-	}
+	let EmptyRow = Array(repeating: 0, count: Width)
+	var Level = Array(repeating: EmptyRow, count: MaxHeight)
 	
-	let Rocks = [
-		[
-			"===="
-		],
-		[
-			".+.",
-			"+++",
-			".+."
-		],
-		[
-			"..*",
-			"..*",
-			"***"
-		],
-		[
-			"|",
-			"|",
-			"|",
-			"|"
-		],
-		[
-			"XX",
-			"XX"
-		]
-	]
+	var StartRow = Level.count
+	let StartColumn = 2
+	var CurInput = 0
 	
-	let Empty = Array(repeating: Character("."), count: 7)
-	let Base = Array(repeating: Character("-"), count: 7)
-	
-	var PlayField = Deque<Array<Character> >()
-	PlayField.append(Base)
-	let AddEmptyLines = {
-		(NumLines:Int) in
-		for _ in 1...NumLines
+	let Intersects = {
+		(R:[[Int]], L:Int, B:Int) -> Bool in
+		
+		for Y in 0..<R.count
 		{
-			PlayField.insert(Empty, at: 0)
+			for X in 0..<R[0].count
+			{
+				if Level[B-Y][L+X] != 0
+				{
+					if R[R.count - Y - 1][X] != 0
+					{
+						return true;
+					}
+				}
+			}
 		}
+		
+		return false
 	}
 	
-	let ShowPlayField = {
-		for X in PlayField
-		{
-			print("|\(String(X))|")
-		}
-		print()
-	}
-	
-	for I in 0..<2022
+	for I in 0..<Iterations
 	{
-		let CurRock = Rocks[I % Rocks.count]
-		var CurX = 2
-		var CurY = 0
+		let R = Rocks[I % Rocks.count]
 		
-		AddEmptyLines(3)
-		//ShowPlayField()
-		AddEmptyLines(CurRock.count)
+		var Height = StartRow-4	// From bottom
+		var Left = StartColumn	// From left
 		
-		let WriteRock = {
-			(DoShow:Bool) in
-			var OY = CurY
-			for L in CurRock
+		let DebugDisplay = {
+			if (false)
 			{
-				var OX = CurX
-				for C in L
+				for Y in 0..<R.count
 				{
-					if C != "."
+					for X in 0..<R[0].count
 					{
-						if ((DoShow && PlayField[OY][OX] != ".")
-							|| (!DoShow && PlayField[OY][OX] != C))
+						if R[R.count - Y - 1][X] != 0
 						{
-							print("ERROR!")
+							if Level[Height-Y][Left+X] == 0
+							{
+								Level[Height-Y][Left+X] = I + 1
+							}
+							else
+							{
+								print("COPY ERROR")
+							}
 						}
-						PlayField[OY][OX] = DoShow ? C : "."
 					}
-					OX += 1
 				}
-				OY += 1
+				
+				print()
+				print("== \(I) ==")
+				for X in Level[(Height-R.count+1)...]
+				{
+					print(X.map( { $0 == 0 ? "." : String($0 % 10) } ) .joined())
+					
+				}
+				for Y in 0..<R.count
+				{
+					for X in 0..<R[0].count
+					{
+						if R[R.count - Y - 1][X] != 0
+						{
+							if Level[Height-Y][Left+X] == I + 1
+							{
+								Level[Height-Y][Left+X] = 0
+							}
+							else
+							{
+								print("COPY ERROR")
+							}
+						}
+					}
+				}
 			}
 		}
+		DebugDisplay();
 		
-		let ShowState = {
-			WriteRock(true)
-			//ShowPlayField()
-			WriteRock(false)
-		}
-		//ShowState()
-		
-		while (true)
+		while(true)
 		{
-			let TryPlace = {
-				(Dx:Int, Dy:Int) -> Bool in
-				
-				let NX = min(max(CurX + Dx, 0),7 - CurRock[0].count)
-				if NX != CurX + Dx
+			let NextOp = Lines[CurInput % Lines.count]
+			CurInput += 1
+			
+			if (Left + NextOp >= 0 && Left + NextOp + R[0].count <= Width)
+			{
+				if !Intersects(R, Left+NextOp, Height)
 				{
-					return false
+					Left += NextOp
+					DebugDisplay()
 				}
-				let NY = CurY + Dy
-				
-				var OY = NY
-				for L in CurRock
-				{
-					var OX = NX
-					for C in L
-					{
-						if C != "." && PlayField[OY][OX] != "."
-						{
-							return false
-						}
-						OX += 1
-					}
-					OY += 1
-				}
-				return true
 			}
 			
-			let Dir = ReadOffset()
-			if (Dir == 0)
+			if Height + 1 == Level.count
 			{
-				print("ERROR")
+				break
 			}
-			if (!TryPlace(0,0))
+			if !Intersects(R, Left, Height+1)
 			{
-				print("ERROR!")
-			}
-			
-			//print(Dir)
-			if (TryPlace(Dir, 0))
-			{
-				CurX += Dir
-				ShowState()
-			}
-			
-			if (TryPlace(0, 1))
-			{
-				CurY += 1
-				ShowState()
+				Height += 1
+				DebugDisplay()
 			}
 			else
 			{
@@ -172,24 +147,34 @@ func Day17(_ File:String) throws
 			}
 		}
 		
-		WriteRock(true)
-		
-		while PlayField[0].reduce(0, { $0 + ($1 == "." ? 1 : 0)}) == 7
+		for Y in 0..<R.count
 		{
-			_ = PlayField.popFirst()
+			for X in 0..<R[0].count
+			{
+				if R[R.count - Y - 1][X] != 0
+				{
+					if Level[Height-Y][Left+X] == 0
+					{
+						Level[Height-Y][Left+X] = I + 1
+					}
+					else
+					{
+						print("COPY ERROR")
+					}
+				}
+			}
 		}
+		
+		StartRow = min(StartRow, Height - R.count + 1)
 	}
 	
-	//ShowPlayField()
-	
-	print()
-	print (PlayField.count-1)
+	print(Level.count - StartRow)
 }
 
 func Day17() throws
 {
 	
-	 try Day17("Day17-Sample")
+	try Day17("Day17-Sample", Iterations:2022, Width:7)
 	//try Day17("Day17-Test")
-	try Day17("Day17-1") // 3159 too high
+	try Day17("Day17-1", Iterations: 2022, Width: 7) // 3159 too high
 }

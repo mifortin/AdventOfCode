@@ -87,15 +87,66 @@ func Day17(_ File:String, Iterations: Int) throws
 		print()
 	}
 	
-	print(String(repeating: ".", count: 100))
-	let Checkpoint = Iterations/100
+	// The trick is that it HAS to repeat.
+	// There are 5 shapes running on the same track (10091 is a prime, so is 5)
+	// so it'll repeat each 10091 x 5 times.
+	//
+	// The first 5 runs will collide with the floor.  Let's ignore that one.
+	// The next 5 will enter repeat mode.  To avoid repetition the placement
+	// would have to collide with each other all the time - difficult but not
+	// impossible.
+	
+	var Pt1Index = -1
+	var CntAtPt1 = 0
+	
+	var Pt2Index = -1
+	var CntAtPt2 = 0
+	
+	// Then, we have a remainder - we have /10091, but 1000000000000 is not a
+	// multiple of this value.
+	var Pt3Index = -1
+	var CntAtPt3 = 0
+	
+	var LastCnt = 0
+	
+	// Cache stride, and then note the distance + I + Playfield count
+	var Repeat = Dictionary<Int,(Int,Int,Int)>()
 	
 	for I in 0..<Iterations
 	{
-		if Checkpoint > 0 && I % Checkpoint == 0
+		if I % (Lines.count * Rocks.count) == 0 && I != 0 && Pt3Index == -1
 		{
-			print("=", terminator: "")
+			let Cur = (I, PlayField.count, PlayField.count-LastCnt)
+			
+			if let F = Repeat[LineIndex]
+			{
+				if F.2 == Cur.2
+				{
+					// Extend execution until we have capture everything...
+					Pt1Index = F.0
+					Pt2Index = Cur.0
+					Pt3Index = Iterations % (Cur.0 - F.0) + I - F.0
+					
+					CntAtPt1 = F.1
+					CntAtPt2 = Cur.1
+				}
+				else
+				{
+					print("#")
+					Repeat[LineIndex] = Cur
+				}
+			}
+			else
+			{
+				print(">", terminator: "")
+				Repeat[LineIndex] = Cur
+			}
+			
+			//print(I, PlayField.count, PlayField.count-LastCnt, LineIndex)
+			LastCnt = PlayField.count
 		}
+		
+		if I == Pt3Index { CntAtPt3 = PlayField.count; break }
 		
 		var CurRock = Rocks[I % Rocks.count]
 		var CurY = 0
@@ -206,7 +257,20 @@ func Day17(_ File:String, Iterations: Int) throws
 	//ShowPlayField()
 	
 	print()
-	print ( "\(File) @ \(Iterations) = \(PlayField.count-1)")
+	print( "\(File) @ \(Iterations) / \(Lines.count)= ")
+	
+	if (CntAtPt3 == 0)
+	{
+		// Iterations ended prior to pattern
+		print(" \t \(PlayField.count-1)")
+	}
+	else
+	{
+		let Rep = Iterations / (Pt2Index - Pt1Index)
+		print( "\t \(Pt1Index), \(Pt2Index), \(Pt3Index)")
+		print( "\t \(CntAtPt1), \(CntAtPt2), \(CntAtPt3)")
+		print( "\t \(Rep) -> \(Pt1Index + Rep*(Pt2Index-Pt1Index) + Pt3Index-Pt2Index) -> \(CntAtPt1 + Rep * (CntAtPt2-CntAtPt1) + CntAtPt3 - CntAtPt2 - 1)")
+	}
 }
 
 func Day17() throws
@@ -214,7 +278,6 @@ func Day17() throws
 	
 	try Day17("Day17-Sample", Iterations: 2022)
 	try Day17("Day17-1", Iterations: 2022) // 3159 was perfect...
-	
 	
 	try Day17("Day17-Sample", Iterations: 1000000000000)
 	try Day17("Day17-1", Iterations: 1000000000000)

@@ -109,7 +109,7 @@ func ReadFile(_ FileName:String) throws -> Array<Substring>
 
 
 do {
-	try Day18()
+	try Day19()
 } catch {
 	print(error);
 }

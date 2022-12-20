@@ -21,10 +21,16 @@ struct Day19Data
 	let Dep2:Day19Dep
 }
 
-struct Day19State
+struct Day19Built : Hashable
+{
+	var Robots:Int
+	var Mined:Int
+}
+
+struct Day19State : Hashable
 {
 	var Time:Int
-	var Built:[(Int, Int)]		// Robot + Ore cnt
+	var Built:[Day19Built]		// Robot + Ore cnt
 }
 
 
@@ -33,33 +39,29 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 	var State = Deque<Day19State>()
 	
 	let InitState = Day19State(Time: 0, Built:
-								[(1,0), (0,0), (0,0), (0,0)])
+								[Day19Built(Robots:1, Mined:0),
+								 Day19Built(Robots:0, Mined:0),
+								 Day19Built(Robots:0, Mined:0),
+								 Day19Built(Robots:0, Mined:0)])
 	State.append(InitState)
 	
 	// Consider - if there are more bots than what can be built...
-	var MaxBots:Dictionary<Int,Int> = [
-		0:0, 1:0, 2:0, 3:99999
+	var MaxBots = [
+		0, 0, 0, 99999
 	]
 	
 	for D in Data {
-		MaxBots[D.Dep1.Material] = max(MaxBots[D.Dep1.Material]!, D.Dep1.Cost)
+		MaxBots[D.Dep1.Material] = max(MaxBots[D.Dep1.Material], D.Dep1.Cost)
 		if D.Dep2.Cost != 0 {
-			MaxBots[D.Dep2.Material] = max(MaxBots[D.Dep2.Material]!, D.Dep2.Cost)
+			MaxBots[D.Dep2.Material] = max(MaxBots[D.Dep2.Material], D.Dep2.Cost)
 		}
 	}
 	
 	var MinGeode = MinGeodeStart
 	
 	var InfGeode = 0
-	for I in 1...24
-	{
-		InfGeode += I
-	}
 	
-	// Maximum ore that we can use.  Except for geode which is infinite.
-	
-	
-	//var Seen = Set<Int>()
+	var Seen = Set<Day19State>()
 	var MaxTime = 0
 	while let Cur = State.popFirst()
 	{
@@ -71,52 +73,67 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 		
 		if Cur.Time == MaxTime
 		{
-			//Seen = Set<Int>()
-			if Cur.Time != 0 {
-				InfGeode -= (24 - Cur.Time)
+			Seen = Set<Day19State>()
+			InfGeode = 0
+			for I in MaxTime...24
+			{
+				InfGeode += 25 - I
 			}
 			MaxTime += 1
 			print(" \(Cur.Time)/\(State.count)/\(MinGeode)/\(InfGeode)", terminator: "")
 		}
 		
 		var Updated = Cur
-		Updated.Built = Cur.Built.map( { ($0.0, $0.0 + $0.1) } )
+		Updated.Built = Cur.Built.map( { Day19Built(Robots:$0.Robots, Mined:$0.Robots + $0.Mined) } )
 		Updated.Time += 1
 		
-		if Updated.Built[3 /* geode */ ].1 + InfGeode < MinGeode
+		if Updated.Built[3 /* geode */ ].Mined + InfGeode < MinGeode
 		{
 			continue
 		}
-		//Seen.insert(Cur.Key())
+		Seen.insert(Cur)
 		
+		var Built = 0
 		for D in Data
 		{
-			if Cur.Built[D.Dep1.Material].1 < D.Dep1.Cost {
+			if Cur.Time == 24 { continue }	// We're at the end...
+			if Cur.Time == 23 && D.Robot < 3 { continue }	// Not useful to build anything else
+			if Cur.Time == 22 && D.Robot < 2 { continue }
+			
+			if Cur.Built[D.Dep1.Material].Mined < D.Dep1.Cost {
+				if Cur.Built[D.Dep1.Material].Robots == 0 { Built += 1}
 				continue
 			}
 			if D.Dep2.Cost != 0 {
-				if Cur.Built[D.Dep2.Material].1 < D.Dep2.Cost {
+				if Cur.Built[D.Dep2.Material].Mined < D.Dep2.Cost {
+					if Cur.Built[D.Dep2.Material].Robots == 0 { Built += 1}
 					continue
 				}
 			}
+			Built += 1
 			
-			if Cur.Built[D.Robot].0 > MaxBots[D.Robot]!
+			if Cur.Built[D.Robot].Robots > MaxBots[D.Robot]
+			{
+				continue
+			}
+			
+			if Cur.Built[D.Robot].Mined > MaxBots[D.Robot] * (25-Cur.Time)
 			{
 				continue
 			}
 			
 			var BotCost = Updated
-			BotCost.Built[D.Robot].0 += 1
-			BotCost.Built[D.Dep1.Material].1 -= D.Dep1.Cost
+			BotCost.Built[D.Robot].Robots += 1
+			BotCost.Built[D.Dep1.Material].Mined -= D.Dep1.Cost
 			if D.Dep2.Cost != 0 {
-				BotCost.Built[D.Dep2.Material].1 -= D.Dep2.Cost
+				BotCost.Built[D.Dep2.Material].Mined -= D.Dep2.Cost
 			}
 			
-			//if Seen.contains(BotCost.Key())
-			//{
+			if Seen.contains(BotCost)
+			{
 			//	print("$", terminator: "")
-			//	continue
-			//}
+				continue
+			}
 			
 			State.append(BotCost)
 			
@@ -127,16 +144,19 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 				//print("  \(Cur)")
 				//print("  \(BotCost)")
 				//print()
-				let PotentialMin = (24-BotCost.Time) * BotCost.Built[3 /* geode */].0 + BotCost.Built[3 /* geode */].1
+				let PotentialMin = (24-BotCost.Time) * BotCost.Built[3 /* geode */].Robots + BotCost.Built[3 /* geode */].Mined
 				//print(PotentialMin, BotCost)
 				MinGeode = max(MinGeode, PotentialMin)
 			}
 		}
 		
-		//if !Seen.contains(Updated.Key())
-		//{
-			State.append(Updated)
-		//}
+		if !Seen.contains(Updated)
+		{
+			if Built != Data.count
+			{
+				State.append(Updated)
+			}
+		}
 		//else
 		//{
 		//	print("$", terminator: "")
@@ -180,17 +200,13 @@ func Day19(_ File:String) throws
 	} )
 	
 	// For each blueprint...
-	var MinGeode = 0
 	var Score = 0
 	var Id = 1
 	for D in Data
 	{
-		let C = Day19(D, MinGeodeStart: MinGeode)
-		if (C < MinGeode)
-		{
-			MinGeode = C
-			Score = MinGeode * Id
-		}
+		let C = Day19(D, MinGeodeStart: 0)
+		
+		Score += C * Id
 		print (Id, C)
 		Id += 1
 	}
@@ -201,6 +217,6 @@ func Day19(_ File:String) throws
 func Day19() throws
 {
 	try Day19("Day19-Sample")
-	try Day19("Day18-1")
+	try Day19("Day19-1")
 }
 

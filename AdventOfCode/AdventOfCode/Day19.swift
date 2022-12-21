@@ -34,7 +34,7 @@ struct Day19State : Hashable
 }
 
 
-func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
+func Day19(_ Data:[Day19Data], MinGeodeStart:Int, NumMinutes:Int) -> Int
 {
 	var State = Deque<Day19State>()
 	
@@ -56,6 +56,7 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 			MaxBots[D.Dep2.Material] = max(MaxBots[D.Dep2.Material], D.Dep2.Cost)
 		}
 	}
+	print(MaxBots)
 	
 	var MinGeode = MinGeodeStart
 	
@@ -65,7 +66,7 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 	var MaxTime = 0
 	while let Cur = State.popFirst()
 	{
-		if Cur.Time == 25
+		if Cur.Time == NumMinutes + 1
 		{
 			State.append(Cur)
 			break
@@ -75,16 +76,30 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 		{
 			Seen = Set<Day19State>()
 			InfGeode = 0
-			for I in MaxTime...24
+			for I in MaxTime...NumMinutes
 			{
-				InfGeode += 25 - I
+				InfGeode += (NumMinutes + 1) - I
 			}
 			MaxTime += 1
-			print(" \(Cur.Time)/\(State.count)/\(MinGeode)/\(InfGeode)", terminator: "")
+			//print(" \(Cur.Time)/\(State.count)/\(MinGeode)/\(InfGeode)", terminator: "")
+			print(".", terminator: "")
 		}
 		
 		var Updated = Cur
-		Updated.Built = Cur.Built.map( { Day19Built(Robots:$0.Robots, Mined:$0.Robots + $0.Mined) } )
+		//Updated.Built = Cur.Built.map( { Day19Built(Robots:$0.Robots, Mined:$0.Robots + $0.Mined) } )
+		for i in 0..<Updated.Built.count
+		{
+			Updated.Built[i].Mined += Updated.Built[i].Robots
+			//Updated.Built[i].Mined = min(Updated.Built[i].Mined, MaxBots[i])
+			
+			//if Updated.Built[i].Robots >= MaxBots[i] {
+			//	Updated.Built[i].Mined = MaxBots[i]
+			//}
+			//else
+			if Updated.Built[i].Mined > MaxBots[i] * (NumMinutes+2-Cur.Time) {
+				Updated.Built[i].Mined = MaxBots[i] * (NumMinutes+2-Cur.Time)
+			}
+		}
 		Updated.Time += 1
 		
 		if Updated.Built[3 /* geode */ ].Mined + InfGeode < MinGeode
@@ -96,9 +111,9 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 		var Built = 0
 		for D in Data
 		{
-			if Cur.Time == 24 { continue }	// We're at the end...
-			if Cur.Time == 23 && D.Robot < 3 { continue }	// Not useful to build anything else
-			if Cur.Time == 22 && D.Robot < 2 { continue }
+			if Cur.Time == NumMinutes { continue }	// We're at the end...
+			if Cur.Time == NumMinutes-1 && D.Robot < 3 { continue }	// Not useful to build anything else
+			if Cur.Time == NumMinutes-2 && D.Robot < 2 { continue }
 			
 			if Cur.Built[D.Dep1.Material].Mined < D.Dep1.Cost {
 				if Cur.Built[D.Dep1.Material].Robots == 0 { Built += 1}
@@ -112,12 +127,12 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 			}
 			Built += 1
 			
-			if Cur.Built[D.Robot].Robots > MaxBots[D.Robot]
+			if Cur.Built[D.Robot].Robots >= MaxBots[D.Robot]
 			{
 				continue
 			}
 			
-			if Cur.Built[D.Robot].Mined > MaxBots[D.Robot] * (25-Cur.Time)
+			if Cur.Built[D.Robot].Mined > MaxBots[D.Robot] * (NumMinutes+1-Cur.Time)
 			{
 				continue
 			}
@@ -131,7 +146,7 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 			
 			if Seen.contains(BotCost)
 			{
-			//	print("$", terminator: "")
+				print("$", terminator: "")
 				continue
 			}
 			
@@ -144,7 +159,7 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 				//print("  \(Cur)")
 				//print("  \(BotCost)")
 				//print()
-				let PotentialMin = (24-BotCost.Time) * BotCost.Built[3 /* geode */].Robots + BotCost.Built[3 /* geode */].Mined
+				let PotentialMin = (NumMinutes-BotCost.Time) * BotCost.Built[3 /* geode */].Robots + BotCost.Built[3 /* geode */].Mined
 				//print(PotentialMin, BotCost)
 				MinGeode = max(MinGeode, PotentialMin)
 			}
@@ -157,10 +172,10 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 				State.append(Updated)
 			}
 		}
-		//else
-		//{
-		//	print("$", terminator: "")
-		//}
+		else
+		{
+			print(">", terminator: "")
+		}
 	}
 	
 	print(MinGeode)
@@ -169,7 +184,7 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int) -> Int
 }
 
 
-func Day19(_ File:String) throws
+func Day19(_ File:String, MaxBlueprints:Int, NumMinutes:Int) throws
 {
 	let Data = try ReadFile(File).filter({ $0 != "" }).map( {
 		let OneEx = /(?<type>([a-z]+)) robot costs (?<cost>([0-9]+)) (?<resource>([a-z]+))\./
@@ -204,19 +219,28 @@ func Day19(_ File:String) throws
 	var Id = 1
 	for D in Data
 	{
-		let C = Day19(D, MinGeodeStart: 0)
+		let C = Day19(D, MinGeodeStart: 0, NumMinutes: NumMinutes)
 		
 		Score += C * Id
 		print (Id, C)
+		
+		if (Id == MaxBlueprints)
+		{
+			break
+		}
+		
 		Id += 1
 	}
-	print(Score)
+	print("\(File) (\(MaxBlueprints), \(NumMinutes)) = \(Score)")
 }
 
 
 func Day19() throws
 {
-	try Day19("Day19-Sample")
-	try Day19("Day19-1")
+	try Day19("Day19-Sample", MaxBlueprints: 999, NumMinutes: 24)
+	try Day19("Day19-1", MaxBlueprints: 999, NumMinutes: 24)
+	
+	try Day19("Day19-Sample", MaxBlueprints: 3, NumMinutes: 32)
+	try Day19("Day19-1", MaxBlueprints: 3, NumMinutes: 32)
 }
 

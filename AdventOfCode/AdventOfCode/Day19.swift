@@ -48,8 +48,7 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int, NumMinutes:Int) -> Int
 	// Consider - if there are more bots than what can be built...
 	var MaxBots = [
 		0, 0, 0, 99999
-	]
-	
+	]	
 	for D in Data {
 		MaxBots[D.Dep1.Material] = max(MaxBots[D.Dep1.Material], D.Dep1.Cost)
 		if D.Dep2.Cost != 0 {
@@ -106,7 +105,6 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int, NumMinutes:Int) -> Int
 		{
 			continue
 		}
-		Seen.insert(Cur)
 		
 		var Built = 0
 		for D in Data
@@ -146,9 +144,10 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int, NumMinutes:Int) -> Int
 			
 			if Seen.contains(BotCost)
 			{
-				print("$", terminator: "")
+				//print("$", terminator: "")
 				continue
 			}
+			Seen.insert(BotCost)
 			
 			State.append(BotCost)
 			
@@ -169,12 +168,13 @@ func Day19(_ Data:[Day19Data], MinGeodeStart:Int, NumMinutes:Int) -> Int
 		{
 			if Built != Data.count
 			{
+				Seen.insert(Updated)
 				State.append(Updated)
 			}
 		}
 		else
 		{
-			print(">", terminator: "")
+			//print(">", terminator: "")
 		}
 	}
 	
